@@ -27,7 +27,7 @@ public class RabbitMqPaymentPublisher : IPaymentPublisher
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
         
-        _channel.QueueDeclare(QueueName, true, false, false);
+        _channel.QueueDeclare(QueueName, durable: true, exclusive: false, autoDelete: false);
 
     }
     

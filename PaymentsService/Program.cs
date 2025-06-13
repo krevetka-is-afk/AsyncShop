@@ -44,11 +44,13 @@
 // }
 
 
+using PaymentsService.Services;
 using PaymentsService.Storage;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<InMemoryAccontStore>();
+builder.Services.AddHostedService<OrderConsumer>();
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
