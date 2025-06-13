@@ -158,3 +158,4 @@
 /Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService/bin/Debug/net8.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService/bin/Debug/net8.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService/bin/Debug/net8.0/RabbitMQ.Client.dll
