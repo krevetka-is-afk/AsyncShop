@@ -56,6 +56,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlite("Data Source=Orders.db"));
 
 builder.Services.AddControllers();
+builder.Services.AddHostedService<OutboxProcessor>();
 builder.Services.AddSingleton<InMemoryOrderStore>();
 builder.Services.AddSingleton<IPaymentPublisher, FakePaymentProcessor>();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OrdersService.Data;
 using OrdersService.Interfaces;
 using OrdersService.Models;
@@ -9,13 +10,13 @@ namespace OrdersService.Controllers;
 
 [ApiController]
 [Route("orders")]
-public class OrderControllers : ControllerBase
+public class OrdersControllers : ControllerBase
 {
     // private readonly InMemoryOrderStore _orderStore;
     private readonly IPaymentPublisher _paymentPublisher;
     private readonly OrdersDbContext _dbContext;
     
-    public OrderControllers(OrdersDbContext dbContext, IPaymentPublisher publisher)
+    public OrdersControllers(OrdersDbContext dbContext, IPaymentPublisher publisher)
     {
         _dbContext = dbContext;
         _paymentPublisher = publisher;
@@ -50,19 +51,20 @@ public class OrderControllers : ControllerBase
 
     }
 
-    // [HttpGet("user")]
-    // public ActionResult<IEnumerable<Order>> GetOrdersForUser([FromQuery] Guid userId)
-    // {
-    //     var orders = _orderStore.GetOrders(userId);
-    //     return Ok(orders);
-    // }
-    //
-    // [HttpGet("{orderId}")]
-    // public ActionResult<Order> GetOrderStatus(Guid orderId)
-    // {
-    //     var order = _orderStore.GetById(orderId);
-    //     if (order == null)
-    //         return NotFound("Order not found");
-    //     return Ok(order);
-    // }
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<Order>>> GetOrdersForUser([FromQuery] Guid userId)
+    {
+        var orders = await _dbContext.Orders
+            .Where(o => o.CustomerId == userId)
+            .ToListAsync();
+        return Ok(orders);
+    }
+    
+    [HttpGet("{orderId}")]
+    public async Task<ActionResult<Order>> GetOrderStatus(Guid orderId)
+    {
+        var order = await _dbContext.Orders.FindAsync(orderId);
+        if (order is null) return NotFound("Order not found");
+        return Ok(order);
+    }
 }
