@@ -43,12 +43,17 @@
 //     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 // }
 
-
 using OrdersService.Services;
 using OrdersService.Storage;
 using OrdersService.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
+using OrdersService.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// turn on EF with SQLite
+builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlite("Data Source=Orders.db"));
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<InMemoryOrderStore>();
