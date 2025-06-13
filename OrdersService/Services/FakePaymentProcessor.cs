@@ -1,9 +1,10 @@
 using OrdersService.Models;
 using OrdersService.Storage;
+using OrdersService.Interfaces;
 
 namespace OrdersService.Services;
 
-public class FakePaymentProcessor
+public class FakePaymentProcessor : IPaymentPublisher
 {
     private readonly InMemoryOrderStore _orderStore;
 
@@ -12,7 +13,7 @@ public class FakePaymentProcessor
         _orderStore = orderStore;
     }
 
-    public async Task ProcessPaymentAsync(Order order)
+    public async Task PublishOrderAsync(Order order)
     {
         await Task.Delay(1000);
 

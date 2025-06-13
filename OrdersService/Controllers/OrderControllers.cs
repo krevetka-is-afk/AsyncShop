@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using OrdersService.Interfaces;
 using OrdersService.Models;
 using OrdersService.Services;
 using OrdersService.Storage;
@@ -10,12 +11,12 @@ namespace OrdersService.Controllers;
 public class OrderControllers : ControllerBase
 {
     private readonly InMemoryOrderStore _orderStore;
-    private readonly FakePaymentProcessor _paymentProcessor;
+    private readonly IPaymentPublisher _paymentPublisher;
 
-    public OrderControllers(InMemoryOrderStore orderStore, FakePaymentProcessor fakePaymentProcessor)
+    public OrderControllers(InMemoryOrderStore orderStore, IPaymentPublisher fakePaymentPublisher)
     {
         _orderStore = orderStore;
-        _paymentProcessor = fakePaymentProcessor;
+        _paymentPublisher = fakePaymentPublisher;
     }
 
     [HttpPost("create")]
@@ -23,7 +24,7 @@ public class OrderControllers : ControllerBase
     {
         var order = _orderStore.CreateOrder(request.CustomerId, request.Amount);
         
-        _ = Task.Run(() => _paymentProcessor.ProcessPaymentAsync(order));
+        _ = Task.Run(() => _paymentPublisher.PublishOrderAsync(order));
         
         return Ok(order);
     }

@@ -46,12 +46,13 @@
 
 using OrdersService.Services;
 using OrdersService.Storage;
+using OrdersService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<InMemoryOrderStore>();
-builder.Services.AddSingleton<FakePaymentProcessor>();
+builder.Services.AddSingleton<IPaymentPublisher, FakePaymentProcessor>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
