@@ -47,6 +47,7 @@ public class OrderConsumer : BackgroundService
 
                 using var scope = _serviceProvider.CreateScope();
                 var accountService = scope.ServiceProvider.GetRequiredService<AccountService>();
+                var statusClient = scope.ServiceProvider.GetRequiredService<OrderStatusClient>();
 
                 var success = await accountService.TryWithdrawAccountAsync(order.CustomerId, order.AmountOfPayment);
                 Console.WriteLine(success

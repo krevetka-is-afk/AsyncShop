@@ -17,7 +17,7 @@ public class FakePaymentProcessor : IPaymentPublisher
     {
         await Task.Delay(1000);
 
-        var success = order.Amount <= 500;
+        var success = order.AmountOfPayment <= 500;
         
         var newStatus = success ? OrderStatus.Paid : OrderStatus.Failed;
         _orderStore.UpdateStatus(order.OrderId, newStatus);

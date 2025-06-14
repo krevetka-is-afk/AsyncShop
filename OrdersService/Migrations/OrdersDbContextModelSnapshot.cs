@@ -23,7 +23,7 @@ namespace OrdersService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("AmountOfPayment")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")

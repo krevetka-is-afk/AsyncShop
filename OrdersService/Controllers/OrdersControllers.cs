@@ -30,7 +30,7 @@ public class OrdersControllers : ControllerBase
         var order = new Order
         {
             CustomerId = request.CustomerId,
-            Amount = request.Amount,
+            AmountOfPayment = request.AmountOfPayment,
             OrderStatus = OrderStatus.PaymentPending
         };
         
@@ -66,5 +66,16 @@ public class OrdersControllers : ControllerBase
         var order = await _dbContext.Orders.FindAsync(orderId);
         if (order is null) return NotFound("Order not found");
         return Ok(order);
+    }
+
+    [HttpPut("{orderId}/update")]
+    public async Task<IActionResult> UpdateOrderStatus(Guid orderId, [FromBody] OrderStatusUpdateRequest request)
+    {
+        var order = await _dbContext.Orders.FindAsync(orderId);
+        if (order == null) return NotFound("Order not found");
+        
+        order.OrderStatus = request.OrderStatus;
+        await _dbContext.SaveChangesAsync();
+        return Ok("Order status updated");
     }
 }

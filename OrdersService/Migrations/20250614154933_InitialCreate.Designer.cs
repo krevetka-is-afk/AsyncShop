@@ -11,7 +11,7 @@ using OrdersService.Data;
 namespace OrdersService.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    [Migration("20250613143210_InitialCreate")]
+    [Migration("20250614154933_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace OrdersService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal>("AmountOfPayment")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")

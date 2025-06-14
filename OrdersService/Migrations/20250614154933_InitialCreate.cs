@@ -17,7 +17,7 @@ namespace OrdersService.Migrations
                 {
                     OrderId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CustomerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    AmountOfPayment = table.Column<decimal>(type: "TEXT", nullable: false),
                     OrderCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
                     OrderStatus = table.Column<int>(type: "INTEGER", nullable: false)
                 },

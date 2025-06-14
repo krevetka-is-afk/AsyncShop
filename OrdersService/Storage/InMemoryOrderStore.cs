@@ -11,7 +11,7 @@ public class InMemoryOrderStore
         var order = new Order
         {
             CustomerId = userId,
-            Amount = amount,
+            AmountOfPayment = amount,
             OrderStatus = OrderStatus.PaymentPending
         };
         _orders.Add(order);
