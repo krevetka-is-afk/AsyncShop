@@ -8,7 +8,7 @@ namespace PaymentsService.Services;
 public class RabbitMqStatusPublisher
 {
     private readonly IModel _channel;
-    private readonly string QueueName = "order_paid";
+    private readonly string QueueName = "orders_paid";
 
     public RabbitMqStatusPublisher()
     {
