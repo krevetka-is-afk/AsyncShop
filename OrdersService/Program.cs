@@ -53,7 +53,9 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // turn on EF with SQLite
-builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlite("Data Source=Orders.db"));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=Orders.db";
+Console.WriteLine($"Using connection string: {connectionString}");
+builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddControllers();
 builder.Services.AddHostedService<OutboxProcessor>();
@@ -68,22 +70,29 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// // Enable Swagger in all environments
-// app.UseSwagger();
-// app.UseSwaggerUI(c =>
-// {
-//     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orders Service API V1");
-//     c.RoutePrefix = "swagger";
-// });
-
-if (app.Environment.IsDevelopment())
+// Apply migrations at startup
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Console.WriteLine("Applying database migrations...");
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
+    db.Database.Migrate();
+    Console.WriteLine("Database migrations applied successfully.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error applying migrations: {ex}");
+    throw;
 }
 
-app.UseHttpsRedirection();
+// Enable Swagger in all environments
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orders Service API V1");
+    c.RoutePrefix = "swagger";
+});
+
 app.UseAuthorization();
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok("Healthy"));
 app.Run();

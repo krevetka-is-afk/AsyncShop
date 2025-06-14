@@ -3,8 +3,8 @@ version: "3.8"
 services:
   orders-service:
     build:
-      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService"
-      dockerfile: "Dockerfile"
+      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop"
+      dockerfile: "OrdersService/Dockerfile"
       target: "base"
     command: []
     entrypoint:
@@ -21,8 +21,8 @@ services:
     working_dir: "/app"
   payments-service:
     build:
-      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop/PaymentsService"
-      dockerfile: "Dockerfile"
+      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop"
+      dockerfile: "PaymentsService/Dockerfile"
       target: "base"
     command: []
     entrypoint:

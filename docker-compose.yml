@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -5,45 +7,58 @@ services:
       - "5672:5672"   # RabbitMQ default port
       - "15672:15672" # Management UI port
     environment:
-      - RABBITMQ_DEFAULT_USER=bse2327
-      - RABBITMQ_DEFAULT_PASS=hse236
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    command: >
+      bash -c "
+        echo 'Waiting for RabbitMQ to start...' &&
+        sleep 10 &&
+        rabbitmq-server
+      "
 
   orders-service:
     build:
-      context: ./OrdersService
+      context: .
+      dockerfile: OrdersService/Dockerfile
     ports:
-      - "5171:80"
+      - "5001:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__UserName=bse2327
-      - RabbitMQ__Password=hse236
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/Orders.db
     depends_on:
       - rabbitmq
     volumes:
       - orders_data:/app/data
-    
+    restart: unless-stopped
 
   payments-service:
     build:
-      context: ./PaymentsService
+      context: .
+      dockerfile: PaymentsService/Dockerfile
     ports:
-      - "5261:80"
+      - "5003:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__UserName=bse2327
-      - RabbitMQ__Password=hse236
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
       - OrdersService__BaseUrl=http://orders-service
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/payments.db
     depends_on:
-      - rabbitmq
       - orders-service
     volumes:
       - payments_data:/app/data
+    restart: unless-stopped
 
 volumes:
   rabbitmq_data:
