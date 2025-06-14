@@ -10,22 +10,21 @@ namespace OrdersService.Services;
 
 public class RabbitMqPaymentPublisher : IPaymentPublisher
 {
-    private readonly IConnection _connection;
     private readonly IModel _channel;
     
     private const string QueueName = "orders_created";
 
-    public RabbitMqPaymentPublisher()
+    public RabbitMqPaymentPublisher(IConfiguration config)
     {
         var factory = new ConnectionFactory
         {
-            HostName = "localhost",
-            UserName = "bse2327",
-            Password = "hse236",
+            HostName = config["RabbitMQ:HostName"],
+            UserName = config["RabbitMQ:UserName"],
+            Password = config["RabbitMQ:Password"]
         };
 
-        _connection = factory.CreateConnection();
-        _channel = _connection.CreateModel();
+        var connection = factory.CreateConnection();
+        _channel = connection.CreateModel();
         
         _channel.QueueDeclare(QueueName, durable: true, exclusive: false, autoDelete: false);
 

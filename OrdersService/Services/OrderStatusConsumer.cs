@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using OrdersService.Data;
 using OrdersService.Models;
 using RabbitMQ.Client;
@@ -12,14 +13,19 @@ public class OrderStatusConsumer : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<OrderStatusConsumer> _logger;
+    private readonly IConfiguration _configuration;
     private readonly string _queueName = "orders_paid";
     private IConnection? _connection;
     private IModel? _channel;
 
-    public OrderStatusConsumer(IServiceProvider serviceProvider, ILogger<OrderStatusConsumer> logger)
+    public OrderStatusConsumer(
+        IServiceProvider serviceProvider,
+        ILogger<OrderStatusConsumer> logger,
+        IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,9 +45,9 @@ public class OrderStatusConsumer : BackgroundService
     {
         var factory = new ConnectionFactory
         {
-            HostName = "localhost",
-            UserName = "bse2327",
-            Password = "hse236",
+            HostName = _configuration["RabbitMQ:HostName"],
+            UserName = _configuration["RabbitMQ:UserName"],
+            Password = _configuration["RabbitMQ:Password"],
             AutomaticRecoveryEnabled = true,
             NetworkRecoveryInterval = TimeSpan.FromSeconds(10)
         };

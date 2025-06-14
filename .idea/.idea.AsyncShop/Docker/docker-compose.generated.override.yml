@@ -1,0 +1,39 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.8"
+services:
+  orders-service:
+    build:
+      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService"
+      dockerfile: "Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/OrdersService.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "ordersservice:dev"
+    ports: []
+    volumes:
+    - "/Users/sergejrastvorov/RiderProjects/AsyncShop/OrdersService:/app:rw"
+    - "/Users/sergejrastvorov/RiderProjects/AsyncShop:/src:rw"
+    - "/Users/sergejrastvorov/.nuget/packages:/root/.nuget/packages"
+    working_dir: "/app"
+  payments-service:
+    build:
+      context: "/Users/sergejrastvorov/RiderProjects/AsyncShop/PaymentsService"
+      dockerfile: "Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/PaymentsService.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "paymentsservice:dev"
+    ports: []
+    volumes:
+    - "/Users/sergejrastvorov/RiderProjects/AsyncShop/PaymentsService:/app:rw"
+    - "/Users/sergejrastvorov/RiderProjects/AsyncShop:/src:rw"
+    - "/Users/sergejrastvorov/.nuget/packages:/root/.nuget/packages"
+    working_dir: "/app"

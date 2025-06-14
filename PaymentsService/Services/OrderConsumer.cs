@@ -12,19 +12,21 @@ public class OrderConsumer : BackgroundService
     private IConnection? _connection;
     private IModel? _channel;
     private readonly string _queueName = "orders_created";
+    private readonly IConfiguration _configuration;
 
-    public OrderConsumer(IServiceProvider serviceProvider)
+    public OrderConsumer(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
+        _configuration = configuration;
     }
     
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var factory = new ConnectionFactory
         {
-            HostName = "localhost",
-            UserName = "bse2327",
-            Password = "hse236"
+            HostName = _configuration["RabbitMQ:HostName"],
+            UserName = _configuration["RabbitMQ:UserName"],
+            Password = _configuration["RabbitMQ:Password"],
         };
         
         _connection = factory.CreateConnection();
