@@ -11,6 +11,7 @@ public class OrderConsumer : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private IConnection? _connection;
     private IModel? _channel;
+    private readonly string _queueName = "orders_created";
 
     public OrderConsumer(IServiceProvider serviceProvider)
     {
@@ -28,8 +29,9 @@ public class OrderConsumer : BackgroundService
         
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
+
         
-        _channel.QueueDeclare("orders_created", durable: true, exclusive: false, autoDelete: false);
+        _channel.QueueDeclare(_queueName, durable: true, exclusive: false, autoDelete: false);
         
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += async (sender, ea) =>
@@ -39,7 +41,6 @@ public class OrderConsumer : BackgroundService
 
             Console.WriteLine("[PaymentService] Received order {0}", json);
             
-            // TODO: deserialize and process bill
             try
             {
                 var order = JsonSerializer.Deserialize<OrderMessage>(json);
@@ -47,12 +48,16 @@ public class OrderConsumer : BackgroundService
 
                 using var scope = _serviceProvider.CreateScope();
                 var accountService = scope.ServiceProvider.GetRequiredService<AccountService>();
-                var statusClient = scope.ServiceProvider.GetRequiredService<OrderStatusClient>();
+                // var statusClient = scope.ServiceProvider.GetRequiredService<OrderStatusClient>();
+                var publisher = scope.ServiceProvider.GetRequiredService<RabbitMqStatusPublisher>();
 
                 var success = await accountService.TryWithdrawAccountAsync(order.CustomerId, order.AmountOfPayment);
                 Console.WriteLine(success
                     ? $"[Payment] Успешно списано {order.AmountOfPayment} для {order.CustomerId}"
                     : $"[Payment] Недостаточно средств для {order.CustomerId}");
+                
+                var status = success ? "Paid" : "Failed"; 
+                publisher.PublishStatus(order.OrderId, status);
             }
             catch (Exception ex)
             {
@@ -60,7 +65,7 @@ public class OrderConsumer : BackgroundService
             }
         };
         
-        _channel.BasicConsume("orders_created", autoAck: true, consumer: consumer);
+        _channel.BasicConsume(_queueName, autoAck: true, consumer: consumer);
         
         return Task.CompletedTask;
     }

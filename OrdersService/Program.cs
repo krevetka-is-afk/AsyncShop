@@ -57,7 +57,8 @@ builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlite("Dat
 
 builder.Services.AddControllers();
 builder.Services.AddHostedService<OutboxProcessor>();
-builder.Services.AddSingleton<InMemoryOrderStore>();
+// builder.Services.AddSingleton<InMemoryOrderStore>();
+builder.Services.AddHostedService<OrderStatusConsumer>();
 builder.Services.AddSingleton<IPaymentPublisher, RabbitMqPaymentPublisher>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
