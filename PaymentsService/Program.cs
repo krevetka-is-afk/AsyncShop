@@ -5,15 +5,12 @@ using PaymentsService.Data;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-// Console.WriteLine("Configured OrdersService BaseUrl: " +
-//                   builder.Configuration["OrdersService:BaseUrl"]);
 
 builder.Services.AddControllers();
-// builder.Services.AddSingleton<InMemoryAccontStore>();
-builder.Services.AddDbContext<PaymentsDbContext>(options => options.UseSqlite("Data Source=payments.db"));
+builder.Services.AddDbContext<PaymentsDbContext>(options =>
+    options.UseSqlite("Data Source=/app/data/payments.db"));
 builder.Services.AddHostedService<OrderConsumer>();
 builder.Services.AddScoped<AccountService>();
-// builder.Services.AddHttpClient<OrderStatusClient>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton<RabbitMqStatusPublisher>();
 builder.Services.AddAuthorization();
@@ -25,28 +22,18 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// // Enable Swagger in all environments
-// app.UseSwagger();
-// app.UseSwaggerUI(c =>
-// {
-//     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payments Service API V1");
-//     c.RoutePrefix = "swagger";
-// });
-
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<PaymentsDbContext>();
+    db.Database.Migrate();
 }
 
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"[Middleware] {context.Request.Method} {context.Request.Path}");
-    await next();
-});
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok("Healthy"));
 
 app.Run();

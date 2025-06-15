@@ -1,5 +1,4 @@
 # This is a generated file. Not intended for manual editing.
-version: "3.8"
 services:
   orders-service:
     build:

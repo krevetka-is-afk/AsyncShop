@@ -2,13 +2,18 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"   # RabbitMQ default port
-      - "15672:15672" # Management UI port
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
     environment:
       - RABBITMQ_DEFAULT_USER=bse2327
       - RABBITMQ_DEFAULT_PASS=hse236
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   orders-service:
     build:
@@ -22,10 +27,10 @@ services:
       - RabbitMQ__UserName=bse2327
       - RabbitMQ__Password=hse236
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - orders_data:/app/data
-    
 
   payments-service:
     build:
@@ -40,8 +45,10 @@ services:
       - RabbitMQ__Password=hse236
       - OrdersService__BaseUrl=http://orders-service
     depends_on:
-      - rabbitmq
-      - orders-service
+      rabbitmq:
+        condition: service_healthy
+      orders-service:
+        condition: service_healthy
     volumes:
       - payments_data:/app/data
 

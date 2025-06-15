@@ -52,7 +52,21 @@ public class OrderStatusConsumer : BackgroundService
             NetworkRecoveryInterval = TimeSpan.FromSeconds(10)
         };
 
-        _connection = factory.CreateConnection();
+        int retries = 0;
+        while (true)
+        {
+            try
+            {
+                _connection = factory.CreateConnection();
+                break;
+            }
+            catch
+            {
+                if (++retries > 10) throw;
+                Console.WriteLine("Retrying RabbitMQ connection...");
+                Thread.Sleep(3000);
+            }
+        }
         _channel = _connection.CreateModel();
 
         _channel.QueueDeclare(_queueName, true, false, false);

@@ -11,6 +11,7 @@ namespace OrdersService.Services;
 public class RabbitMqPaymentPublisher : IPaymentPublisher
 {
     private readonly IModel _channel;
+    private IConnection? _connection;
     
     private const string QueueName = "orders_created";
 
@@ -23,8 +24,22 @@ public class RabbitMqPaymentPublisher : IPaymentPublisher
             Password = config["RabbitMQ:Password"]
         };
 
-        var connection = factory.CreateConnection();
-        _channel = connection.CreateModel();
+        int retries = 0;
+        while (true)
+        {
+            try
+            {
+                _connection = factory.CreateConnection();
+                break;
+            }
+            catch
+            {
+                if (++retries > 10) throw;
+                Console.WriteLine("Retrying RabbitMQ connection...");
+                Thread.Sleep(3000);
+            }
+        }
+        _channel = _connection.CreateModel();
         
         _channel.QueueDeclare(QueueName, durable: true, exclusive: false, autoDelete: false);
 

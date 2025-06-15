@@ -29,7 +29,21 @@ public class OrderConsumer : BackgroundService
             Password = _configuration["RabbitMQ:Password"],
         };
         
-        _connection = factory.CreateConnection();
+        var retries = 0;
+        while (true)
+        {
+            try
+            {
+                _connection = factory.CreateConnection();
+                break;
+            }
+            catch
+            {
+                if (++retries > 10) throw;
+                Console.WriteLine("Retrying RabbitMQ connection...");
+                Thread.Sleep(3000);
+            }
+        }
         _channel = _connection.CreateModel();
 
         

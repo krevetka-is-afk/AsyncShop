@@ -12,6 +12,7 @@ namespace OrdersService.Services;
 public class OutboxProcessor : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
+    
 
     public OutboxProcessor(IServiceProvider serviceProvider)
     {
@@ -25,12 +26,17 @@ public class OutboxProcessor : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<OrdersDbContext>();
             var publisher = scope.ServiceProvider.GetRequiredService<IPaymentPublisher>();
-            
+        
             var messages = await db.OutboxMessages
                 .Where(m => !m.Processed)
                 .OrderBy(m => m.CreatedAt)
                 .Take(10)
                 .ToListAsync(stoppingToken);
+
+            if (messages.Any())
+            {
+                Console.WriteLine($"[Outbox] Found {messages.Count} messages to process");
+            }
 
             foreach (var message in messages)
             {
@@ -41,18 +47,22 @@ public class OutboxProcessor : BackgroundService
                         var order = JsonSerializer.Deserialize<Order>(message.Payload);
                         if (order != null)
                             await publisher.PublishOrderAsync(order);
-                        
+
                         message.Processed = true;
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[Outbox] Error message processed: {e.Message}");
+                    Console.WriteLine($"[Outbox] Error processing message {message.Id}: {e.Message}");
                 }
             }
-            
-            await db.SaveChangesAsync(stoppingToken);
-            await Task.Delay(1000, stoppingToken);
+
+            if (messages.Any())
+            {
+                await db.SaveChangesAsync(stoppingToken);
+            }
+
+            await Task.Delay(1000, stoppingToken); // Лучше вынести в конфиг
         }
     }
 }

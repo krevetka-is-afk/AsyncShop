@@ -23,7 +23,7 @@ public class OrdersControllers : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<Order>> CreateOrder([FromBody] OrderRequest request)
+    public async Task<ActionResult<Order>> CreateOrder([FromQuery] OrderRequest request)
     {
         await using var tx = await _dbContext.Database.BeginTransactionAsync();
 
@@ -69,7 +69,7 @@ public class OrdersControllers : ControllerBase
     }
 
     [HttpPut("{orderId}/update")]
-    public async Task<IActionResult> UpdateOrderStatus(Guid orderId, [FromBody] OrderStatusUpdateRequest request)
+    public async Task<IActionResult> UpdateOrderStatus(Guid orderId, [FromQuery] OrderStatusUpdateRequest request)
     {
         var order = await _dbContext.Orders.FindAsync(orderId);
         if (order == null) return NotFound("Order not found");
