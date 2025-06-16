@@ -47,8 +47,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      orders-service:
-        condition: service_healthy
+#      orders-service:
+#        condition: service_healthy
     volumes:
       - payments_data:/app/data
 
