@@ -25,4 +25,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\UseCases\" />
+    <Folder Include="Domain\Events\" />
+    <Folder Include="Infrastructure\Repositories\" />
+  </ItemGroup>
+
 </Project>
