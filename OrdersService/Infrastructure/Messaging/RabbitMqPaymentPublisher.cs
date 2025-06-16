@@ -1,12 +1,11 @@
 using System.Text;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore.Metadata;
-using OrdersService.Interfaces;
-using OrdersService.Models;
+using OrdersService.Domain.Entities;
+using OrdersService.Domain.Interfaces;
 using RabbitMQ.Client;
 using IModel = RabbitMQ.Client.IModel;
 
-namespace OrdersService.Services;
+namespace OrdersService.Infrastructure.Messaging;
 
 public class RabbitMqPaymentPublisher : IPaymentPublisher
 {

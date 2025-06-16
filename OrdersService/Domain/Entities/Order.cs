@@ -1,4 +1,6 @@
-namespace OrdersService.Models;
+using OrdersService.Models;
+
+namespace OrdersService.Domain.Entities;
 
 public class Order
 {

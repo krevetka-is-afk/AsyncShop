@@ -1,3 +1,4 @@
+using OrdersService.Domain.Entities;
 using OrdersService.Models;
 
 namespace OrdersService.Storage;

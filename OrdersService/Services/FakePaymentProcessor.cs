@@ -1,6 +1,7 @@
+using OrdersService.Domain.Entities;
+using OrdersService.Domain.Interfaces;
 using OrdersService.Models;
 using OrdersService.Storage;
-using OrdersService.Interfaces;
 
 namespace OrdersService.Services;
 

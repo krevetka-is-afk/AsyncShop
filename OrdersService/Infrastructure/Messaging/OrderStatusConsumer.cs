@@ -1,13 +1,11 @@
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using OrdersService.Data;
+using OrdersService.Infrastructure.Data;
 using OrdersService.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace OrdersService.Services;
+namespace OrdersService.Infrastructure.Messaging;
 
 public class OrderStatusConsumer : BackgroundService
 {

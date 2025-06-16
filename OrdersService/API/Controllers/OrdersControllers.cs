@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrdersService.Data;
-using OrdersService.Interfaces;
+using OrdersService.Domain.Entities;
+using OrdersService.Domain.Interfaces;
+using OrdersService.Infrastructure.Data;
 using OrdersService.Models;
-using OrdersService.Services;
-using OrdersService.Storage;
 
-namespace OrdersService.Controllers;
+namespace OrdersService.API.Controllers;
 
 [ApiController]
 [Route("orders")]

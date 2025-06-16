@@ -1,9 +1,13 @@
 using OrdersService.Services;
 using OrdersService.Storage;
-using OrdersService.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using OrdersService.Data;
 using Microsoft.OpenApi.Models;
+using OrdersService.Application.Services;
+using OrdersService.Application.UseCases;
+using OrdersService.Domain.Interfaces;
+using OrdersService.Infrastructure.Data;
+using OrdersService.Infrastructure.Messaging;
+using OrdersService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,8 @@ builder.Services.AddDbContext<OrdersDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddHostedService<OutboxProcessor>();
 builder.Services.AddHostedService<OrderStatusConsumer>();
+builder.Services.AddScoped<IOrderRepository, EfOrderRepository>();
+builder.Services.AddScoped<CreateOrderUseCase>();
 builder.Services.AddSingleton<IPaymentPublisher, RabbitMqPaymentPublisher>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

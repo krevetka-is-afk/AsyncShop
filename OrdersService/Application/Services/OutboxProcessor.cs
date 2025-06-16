@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using OrdersService.Models;
-using OrdersService.Data;
-using OrdersService.Interfaces;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using OrdersService.Domain.Entities;
+using OrdersService.Domain.Interfaces;
+using OrdersService.Infrastructure.Data;
 
-namespace OrdersService.Services;
+namespace OrdersService.Application.Services;
 
 /// <summary>
 /// Фоновый сервис обрабатывающий таблицу OutboxMessages

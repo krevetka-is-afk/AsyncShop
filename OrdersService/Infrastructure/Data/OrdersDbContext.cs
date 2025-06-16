@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using OrdersService.Domain.Entities;
 using OrdersService.Models;
 
-namespace OrdersService.Data;
+namespace OrdersService.Infrastructure.Data;
 
 public class OrdersDbContext : DbContext
 {

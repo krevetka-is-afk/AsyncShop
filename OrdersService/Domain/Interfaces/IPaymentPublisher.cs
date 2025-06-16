@@ -1,6 +1,6 @@
-using OrdersService.Models;
+using OrdersService.Domain.Entities;
 
-namespace OrdersService.Interfaces;
+namespace OrdersService.Domain.Interfaces;
 
 public interface IPaymentPublisher
 {
