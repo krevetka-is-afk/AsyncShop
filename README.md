@@ -16,10 +16,13 @@
 - Паттерн **Transactional Outbox + BackgroundConsumer**.
 - Взаимодействие между сервисами через обмен сообщениями (event-driven).
 
-```
-OrdersService ---> [Outbox] ---> RabbitMQ ---> PaymentsService
-                                 |              |
-                                 └--<--<--<--<--┘ (Status Update)
+```mermaid
+flowchart LR
+  OrdersService --> Db1[(Postgres)]
+  OrdersService -->|outbox| RabbitMQ
+  PaymentsService --> Db2[(Postgres)]
+  PaymentsService -->|outbox| RabbitMQ
+  RabbitMQ -->|inbox| PaymentsService
 ```
 
 ## Запуск проекта
