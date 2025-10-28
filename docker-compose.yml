@@ -1,0 +1,58 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=bse2327
+      - RABBITMQ_DEFAULT_PASS=hse236
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orders-service:
+    build:
+      context: ./OrdersService
+    ports:
+      - "5171:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=bse2327
+      - RabbitMQ__Password=hse236
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - orders_data:/app/data
+
+  payments-service:
+    build:
+      context: ./PaymentsService
+    ports:
+      - "5261:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=bse2327
+      - RabbitMQ__Password=hse236
+      - OrdersService__BaseUrl=http://orders-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+#      orders-service:
+#        condition: service_healthy
+    volumes:
+      - payments_data:/app/data
+
+volumes:
+  rabbitmq_data:
+  orders_data:
+  payments_data:
