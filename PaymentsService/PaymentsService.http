@@ -1,6 +1,0 @@
-@PaymentsService_HostAddress = http://localhost:5261
-
-#GET {{PaymentsService_HostAddress}}
-#Accept: application/json
-
-###
